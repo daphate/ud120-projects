@@ -11,8 +11,6 @@ from outlier_cleaner import outlierCleaner
 ages = pickle.load( open("../outliers/practice_outliers_ages.pkl", "r") )
 net_worths = pickle.load( open("../outliers/practice_outliers_net_worths.pkl", "r") )
 
-
-
 ### ages and net_worths need to be reshaped into 2D numpy arrays
 ### second argument of reshape command is a tuple of integers: (n_rows, n_columns)
 ### by convention, n_rows is the number of data points
@@ -29,22 +27,14 @@ reg = linear_model.LinearRegression()
 
 # Train the model using the training sets
 reg.fit(ages_train, net_worths_train)
+pred = reg.predict(ages_test)
 
 # The coefficients
-print('Coefficients: \n', reg.coef_)
+print("Coefficients: ", reg.coef_, reg.intercept_)
 # The mean squared error
 print("Mean squared error: %.2f"
-      % numpy.mean((reg.predict(ages_test) - net_worths_test) ** 2))
-# Explained variance score: 1 is perfect prediction
+      % numpy.mean(( pred - net_worths_test) ** 2))
 print('Variance score: %.2f' % reg.score(ages_test, net_worths_test))
-
-
-
-
-
-
-
-
 
 try:
     plt.plot(ages, reg.predict(ages), color="blue")
@@ -53,21 +43,16 @@ except NameError:
 plt.scatter(ages, net_worths)
 plt.show()
 
-
-### identify and remove the most outlier-y points
 cleaned_data = []
+
+
 try:
     predictions = reg.predict(ages_train)
     cleaned_data = outlierCleaner( predictions, ages_train, net_worths_train )
+
 except NameError:
     print "your regression object doesn't exist, or isn't name reg"
     print "can't make predictions to use in identifying outliers"
-
-
-
-
-
-
 
 ### only run this code if cleaned_data is returning data
 if len(cleaned_data) > 0:
@@ -92,3 +77,6 @@ if len(cleaned_data) > 0:
 else:
     print "outlierCleaner() is returning an empty list, no refitting to be done"
 
+# The coefficients
+print("Coefficients: ", reg.coef_, reg.intercept_)
+print('Variance score: %.2f' % reg.score(ages_test, net_worths_test))
