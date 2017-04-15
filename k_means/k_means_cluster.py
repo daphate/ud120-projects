@@ -45,8 +45,8 @@ for key in data_dict.keys():
     if data_dict[key]["salary"] != "NaN":
         sal.append(data_dict[key]["salary"])
 
-print(min(eso), max(eso))
-print(min(sal), max(sal))
+print("Min and max exercised_stock_options", min(eso), max(eso))
+print("Min and max salaries", min(sal), max(sal))
 
 
 ### the input features we want to use 
@@ -71,7 +71,7 @@ plt.show()
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
 
-kmeans = KMeans(n_clusters=2, random_state=0).fit(finance_features, poi)
+kmeans = KMeans(n_clusters=2, random_state=0, n_jobs=-1).fit(finance_features, poi)
 pred = kmeans.predict(finance_features)
 
 
