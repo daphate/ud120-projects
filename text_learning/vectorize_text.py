@@ -24,7 +24,6 @@ from nltk import corpus
     The data is stored in lists and packed away in pickle files at the end.
 """
 
-"""
 from_sara  = open("from_sara.txt", "r")
 from_chris = open("from_chris.txt", "r")
 
@@ -81,15 +80,14 @@ from_chris.close()
 pickle.dump( word_data, open("your_word_data.pkl", "wb") )
 pickle.dump( from_data, open("your_email_authors.pkl", "wb") )
 
-"""
-
 ### in Part 4, do TfIdf vectorization here
-
+"""
 word_data = pickle.load(open("your_word_data.pkl", "rb"))
 from_data = pickle.load(open("your_email_authors.pkl", "rb"))
 
 vect = TfidfVectorizer(stop_words='english')
 vect.fit(word_data)
-print(len(vect.get_feature_names()))
 
+print(len(vect.get_feature_names()))
 print(vect.get_feature_names()[34597])
+"""
