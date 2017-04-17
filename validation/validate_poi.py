@@ -19,7 +19,7 @@ from feature_format import featureFormat, targetFeatureSplit
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score, recall_score, precision_score
 from sklearn.model_selection import train_test_split
-data_dict = pickle.load(open("../final_project/final_project_dataset_unix_1.pkl", "rb") )
+data_dict = pickle.load(open("../final_project/final_project_dataset_unix.pkl", "rb") )
 
 ### first element is our labels, any added elements are predictor
 ### features. Keep this the same for the mini-project, but you'll
@@ -50,4 +50,11 @@ print("Recall: ", recall_score(labels_test, pred))
 
 #print(len(labels_test))
 #print(clf.score(features_test, labels_test))
+
+predictions = [0, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 1]
+true_labels = [0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 0]
+
+print("Number of true positives: ", numpos)
+print("Precision: ", precision_score(true_labels, predictions))
+print("Recall: ", recall_score(true_labels, predictions))
 
