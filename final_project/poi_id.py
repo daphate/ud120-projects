@@ -18,7 +18,7 @@ from sklearn.decomposition import PCA
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
 ### You will need to use more features
-features_list = ['salary',  'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees']
+features_list = ['salary',  'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees', 'msg_to_poi_ratio', 'msg_from_poi_ratio']
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset_unix.pkl", "rb") as data_file:
@@ -68,21 +68,21 @@ for key in my_dataset.keys():
         float(my_dataset[key]['to_messages'])
 
     if math.isnan(msg_to_poi_ratio):
-        my_dataset[key]['to_poi_ratio'] = "NaN"
+        my_dataset[key]['msg_to_poi_ratio'] = "NaN"
     else:
-        my_dataset[key]['to_poi_ratio'] = msg_to_poi_ratio
+        my_dataset[key]['msg_to_poi_ratio'] = msg_to_poi_ratio
     
     if math.isnan(msg_from_poi_ratio):
-        my_dataset[key]['from_poi_ratio'] = "NaN"
+        my_dataset[key]['msg_from_poi_ratio'] = "NaN"
     else:
-        my_dataset[key]['from_poi_ratio'] = msg_from_poi_ratio
+        my_dataset[key]['msg_from_poi_ratio'] = msg_from_poi_ratio
+
 
 
 
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
-
 
 
 ### Task 4: Try a varity of classifiers
