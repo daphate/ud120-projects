@@ -2,6 +2,8 @@
 
 import sys
 import pickle
+import math
+from time import time
 import matplotlib.pyplot as plt
 sys.path.append("../tools/")
 
@@ -10,12 +12,13 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.metrics import accuracy_score, recall_score, precision_score
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
+from sklearn.decomposition import PCA
 
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
 ### You will need to use more features
-features_list = ['salary', 'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees']
+features_list = ['salary',  'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees']
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset_unix.pkl", "rb") as data_file:
@@ -54,9 +57,33 @@ print("")
 
 my_dataset = data_dict
 
+print("Add ratios of from and to POIs messages to sent and received messages numbers.")
+
+for key in my_dataset.keys():
+    msg_to_poi_ratio = \
+        float(my_dataset[key]['from_this_person_to_poi']) / \
+        float(my_dataset[key]['from_messages'])
+    msg_from_poi_ratio = \
+        float(my_dataset[key]['from_poi_to_this_person']) / \
+        float(my_dataset[key]['to_messages'])
+
+    if math.isnan(msg_to_poi_ratio):
+        my_dataset[key]['to_poi_ratio'] = "NaN"
+    else:
+        my_dataset[key]['to_poi_ratio'] = msg_to_poi_ratio
+    
+    if math.isnan(msg_from_poi_ratio):
+        my_dataset[key]['from_poi_ratio'] = "NaN"
+    else:
+        my_dataset[key]['from_poi_ratio'] = msg_from_poi_ratio
+
+
+
 ### Extract features and labels from dataset for local testing
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
+
+
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
@@ -65,7 +92,6 @@ labels, features = targetFeatureSplit(data)
 ### http://scikit-learn.org/stable/modules/pipeline.html
 
 # Provided to give you a starting point. Try a variety of classifiers.
-
 
 #clf = GaussianNB()
 
