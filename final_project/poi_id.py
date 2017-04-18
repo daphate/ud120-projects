@@ -5,6 +5,7 @@ import pickle
 import math
 from time import time
 import matplotlib.pyplot as plt
+from sklearn.cluster.k_means_ import KMeans
 sys.path.append("../tools/")
 
 from sklearn.tree import DecisionTreeClassifier
@@ -13,16 +14,19 @@ from sklearn.metrics import accuracy_score, recall_score, precision_score
 from feature_format import featureFormat, targetFeatureSplit
 from tester import dump_classifier_and_data
 from sklearn.decomposition import PCA
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.svm import SVC
+from sklearn.feature_selection import SelectKBest, SelectPercentile, SelectFdr, chi2
 
 ### Task 1: Select what features you'll use.
 ### features_list is a list of strings, each of which is a feature name.
 ### The first feature must be "poi".
 ### You will need to use more features
 
-#features_list = ['poi', 'salary',  'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees', 'msg_to_poi_ratio', 'msg_from_poi_ratio']
+features_list = ['poi', 'salary',  'deferral_payments', 'total_payments', 'loan_advances', 'bonus', 'restricted_stock_deferred', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'other', 'long_term_incentive', 'restricted_stock', 'director_fees', 'msg_to_poi_ratio', 'msg_from_poi_ratio']
 
 ### New feature list with only importaint features
-features_list = ['poi', 'bonus', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'restricted_stock', 'msg_to_poi_ratio']
+#features_list = ['poi', 'bonus', 'deferred_income', 'total_stock_value', 'expenses', 'exercised_stock_options', 'restricted_stock', 'msg_to_poi_ratio']
 
 ### Load the dictionary containing the dataset
 with open("final_project_dataset_unix.pkl", "rb") as data_file:
@@ -85,13 +89,28 @@ for key in my_dataset.keys():
 data = featureFormat(my_dataset, features_list, sort_keys = True)
 labels, features = targetFeatureSplit(data)
 
-### Try to find importance of each feature
-clf = DecisionTreeClassifier(max_depth=9)
+for f, feat in enumerate(features):
+    print(f, feat)
+
+minmax = MinMaxScaler()
+features = minmax.fit_transform(features)
+
+for f, feat in enumerate(features):
+    print(f, feat)    
+    
+### Trying to find importance of each feature
+
+clf = DecisionTreeClassifier(criterion="entropy", min_samples_split=2, max_features="auto", random_state=42)
 clf.fit(features, labels)
 
 for i, item in enumerate(features_list[1:]):
-    print(item, clf.feature_importances_[i])
+    print(item, "%0.2f" % clf.feature_importances_[i])
 
+features = SelectKBest(chi2, k=8).fit_transform(features, labels)
+
+clf.fit(features, labels)
+for i, item in enumerate(features[0]):
+    print("Feature importance: %0.2f" % clf.feature_importances_[i])
 
 ### Task 4: Try a varity of classifiers
 ### Please name your classifier clf for easy export below.
@@ -101,8 +120,10 @@ for i, item in enumerate(features_list[1:]):
 
 # Provided to give you a starting point. Try a variety of classifiers.
 
-#clf = GaussianNB()
-
+clsfr = []
+for clf in [GaussianNB(), DecisionTreeClassifier(), SVC()]:
+    clf.fit(features, labels)
+    print(clf.score(features, labels))
 
 ### Task 5: Tune your classifier to achieve better than .3 precision and recall 
 ### using our testing script. Check the tester.py script in the final project
@@ -117,7 +138,8 @@ features_train, features_test, labels_train, labels_test = \
     train_test_split(features, labels, test_size=0.3, random_state=42)
 
 #### My code
-
+#for clf in clsfr:
+#    print(clf.score(test_features, test_labels))
 
 ##### -- My code
 
