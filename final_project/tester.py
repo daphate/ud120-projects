@@ -6,13 +6,13 @@
     requires that the algorithm, dataset, and features list
     be written to my_classifier.pkl, my_dataset.pkl, and
     my_feature_list.pkl, respectively
-
     that process should happen at the end of poi_id.py
 """
 
 import pickle
 import sys
-from sklearn.model_selection import StratifiedShuffleSplit
+from sklearn.cross_validation import StratifiedShuffleSplit
+
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 
@@ -30,7 +30,10 @@ def test_classifier(clf, dataset, feature_list, folds = 1000):
     false_negatives = 0
     true_positives = 0
     false_positives = 0
+    idx = 0
     for train_idx, test_idx in cv: 
+        idx = idx+1
+        print("Iterating through cv, iteration, ", idx, "of ", len(cv))
         features_train = []
         features_test  = []
         labels_train   = []
@@ -59,6 +62,8 @@ def test_classifier(clf, dataset, feature_list, folds = 1000):
                 print ("All predictions should take value 0 or 1.")
                 print ("Evaluating performance for processed predictions:")
                 break
+    print("SCORE:", true_positives, false_negatives, false_positives, true_negatives)
+    
     try:
         total_predictions = true_negatives + false_negatives + false_positives + true_positives
         accuracy = 1.0*(true_positives + true_negatives)/total_predictions
